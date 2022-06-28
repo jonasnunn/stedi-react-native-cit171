@@ -16,23 +16,26 @@ const sendText = async (phoneNumber) => {
   console.log("PhoneNumber: ",phoneNumber);
 }
 
-const getToken = async({phoneNumber,otp}) =>{
-  const loginResponse = await fetch('https://dev.stedi.me/twofactorlogin',{
+const getToken = async({phoneNumber, oneTimePassword, setUserLoggedIn}) =>{
+  const tokenResponse = await fetch('https://dev.stedi.me/twofactorlogin',{
   method: 'POST',
+  body:JSON.stringify({oneTimePassword, phoneNumber}),
   headers: {
-      'Content-Type': 'application/text'
-  },
-  body:{
-    phoneNumber,
-    oneTimePassword
-  }
+      'content-Type': 'application/json'
+    }
   });
-  const token = await loginResponse.text();
-  console.log(token);
+
+  const responseCode = tokenResponse.status;//200 means logged in succesfully
+  console.log("Response Status Code", responseCode)
+  if(responseCode==200){
+    setUserLoggedIn(true);
+  }
+  const tokenResonseString = await tokenResponse.text();
+  console.log(tokenResonseString);
 }
 
 
-const Login = () => {
+const Login = (props) => {
   const [phoneNumber, setPhoneNumber] = useState("");
   const [oneTimePassword, setOneTimePassword] = useState(null);
 
@@ -63,7 +66,7 @@ const Login = () => {
       
       <TouchableOpacity
       style={styles.button}
-      onPress={()=>{sendText(phoneNumber)}}
+      onPress={()=>{getToken({phoneNumber, oneTimePassword, phoneNumber, setUserLoggedIn:props.setUserLoggedIn})}}
       >
         <Text>Login</Text>
       </TouchableOpacity>
