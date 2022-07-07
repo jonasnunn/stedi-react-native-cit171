@@ -32,8 +32,19 @@ const getToken = async({phoneNumber, oneTimePassword, setUserLoggedIn}) =>{
   }
   const tokenResonseString = await tokenResponse.text();
   console.log(tokenResonseString);
+  getEmailToken(tokenResonseString);
 }
 
+const getEmailToken = async({tokenResponse}) =>{
+  const emailResponse = await fetch('https://dev.stedi.me/validate/'+getToken,{
+    method: 'GET',
+    headers: {
+      'content-Type': 'application/json'
+    }
+  });
+  const emailResponseString = await emailResponse.text();
+  setEmailaddress(emailResponseString);
+};
 
 const Login = (props) => {
   const [phoneNumber, setPhoneNumber] = useState("");
@@ -69,10 +80,7 @@ const Login = (props) => {
       onPress={()=>{getToken({phoneNumber, oneTimePassword, phoneNumber, setUserLoggedIn:props.setUserLoggedIn})}}
       >
         <Text>Login</Text>
-      </TouchableOpacity>
-
-
-
+      </TouchableOpacity> 
     </SafeAreaView>
   );
 };
