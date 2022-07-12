@@ -16,7 +16,7 @@ const sendText = async (phoneNumber) => {
   console.log("PhoneNumber: ",phoneNumber);
 }
 
-const getToken = async({phoneNumber, oneTimePassword, setUserLoggedIn}) =>{
+const getToken = async({phoneNumber, oneTimePassword, setUserLoggedIn, setEmailAddress}) =>{
   const tokenResponse = await fetch('https://dev.stedi.me/twofactorlogin',{
   method: 'POST',
   body:JSON.stringify({oneTimePassword, phoneNumber}),
@@ -29,22 +29,17 @@ const getToken = async({phoneNumber, oneTimePassword, setUserLoggedIn}) =>{
   console.log("Response Status Code", responseCode)
   if(responseCode==200){
     setUserLoggedIn(true);
-  }
-  const tokenResonseString = await tokenResponse.text();
-  console.log(tokenResonseString);
-  getEmailToken(tokenResonseString);
-}
+  
+    const tokenResonseString = await tokenResponse.text();
+    console.log(tokenResonseString);
 
-const getEmailToken = async({tokenResponse}) =>{
-  const emailResponse = await fetch('https://dev.stedi.me/validate/'+getToken,{
-    method: 'GET',
-    headers: {
-      'content-Type': 'application/json'
-    }
-  });
-  const emailResponseString = await emailResponse.text();
-  setEmailaddress(emailResponseString);
-};
+    const emailResponse = await fetch('https://dev.stedi.me/validate/'+tokenResonseString,);
+    const emailResponseString = await emailResponse.text();
+    console.log("email text:" ,emailResponseString)
+    setEmailAddress(emailResponseString);
+  }
+  
+}
 
 const Login = (props) => {
   const [phoneNumber, setPhoneNumber] = useState("");
@@ -77,7 +72,7 @@ const Login = (props) => {
       
       <TouchableOpacity
       style={styles.button}
-      onPress={()=>{getToken({phoneNumber, oneTimePassword, phoneNumber, setUserLoggedIn:props.setUserLoggedIn})}}
+      onPress={()=>{getToken({phoneNumber, oneTimePassword, phoneNumber, setUserLoggedIn:props.setUserLoggedIn, setEmailAddress:props.setEmailAddress})}}
       >
         <Text>Login</Text>
       </TouchableOpacity> 

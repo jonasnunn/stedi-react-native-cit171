@@ -20,6 +20,7 @@ export default function App() {
   if(userLoggedIn){
 
   return (
+  console.log(userEmail),  
     <NavigationContainer>
       <Tab.Navigator
         initialRouteName='Home'
@@ -64,7 +65,8 @@ export default function App() {
   } else{
     return(
       <View>
-        <Login setUserLoggedIn={setUserLoggedIn} setEmailAddress={setEmailAddress}/>
+        <Login setUserLoggedIn={setUserLoggedIn}
+               setEmailAddress={setEmailAddress}/>
       </View>
     )
   }
